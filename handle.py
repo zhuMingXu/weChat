@@ -22,27 +22,27 @@ class Handle(object):
             sha1 = hashlib.sha1()
             map(sha1.update, list)
             hashcode = sha1.hexdigest()
-            print "handle/GET func: hashcode, signature: ", hashcode, signature
+            print("handle/GET func: hashcode, signature: ", hashcode, signature)
             if hashcode == signature:
                 return echostr
             else:
                 return ""
-        except Exception, Argument:
-            return Argument
+        except Exception as e:
+            return e
 
     def POST(self):
         try:
             xmlData = web.data()
-            print "handle xmlData:",xmlData
             msg = parse_message(xmlData)
+            print("receive msg:",msg)
             reply = ImageReply(message=msg)
-            reply.media_id = u'ZJVhlh0cg72wKvGERY2828Cgm2fgBu_dHoDpRV6n_j4Vovq9vPSFz-CVR-48nCqf'
+            reply.media_id = 'ZJVhlh0cg72wKvGERY2828Cgm2fgBu_dHoDpRV6n_j4Vovq9vPSFz-CVR-48nCqf'
             xmlReply = reply.render()
             return xmlReply
 
 
-        except Exception, Argment:
-            return Argment
+        except Exception as e:
+            return e
 
 
 
