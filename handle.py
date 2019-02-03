@@ -3,7 +3,14 @@ import web
 from wechatpy import parse_message
 from wechatpy.replies import create_reply
 from wechatpy.replies import ImageReply
+from autoReply.reply import AutoReply
+from wechatpy.events import SubscribeEvent
+from wechatpy.messages import TextMessage
+#autoReply obj
+autoReply = AutoReply()
 
+replyText = {"subscribeText":"欢迎关注高校er++,这里是所有高校er的聚集地~~",\
+             "defaultText":"高校er听不懂你在说什么~~"}
 
 class Handle(object):
     def GET(self):
@@ -35,15 +42,24 @@ class Handle(object):
             xmlData = web.data()
             msg = parse_message(xmlData)
             print("receive msg:",msg)
-            reply = ImageReply(message=msg)
-            reply.media_id = 'ZJVhlh0cg72wKvGERY2828Cgm2fgBu_dHoDpRV6n_j4Vovq9vPSFz-CVR-48nCqf'
-            xmlReply = reply.render()
-            return xmlReply
 
+            if isinstance(msg,SubscribeEvent):
+               return autoReply.subscribeReply(msg,content=replyText['subscribeText'])
+            elif isinstance(msg,TextMessage):
+               text = msg.content#receive content
+               if '@' in text:
+                   keyWord = text.split('@')[0]
+                   if keyWord == '新年歌词' or keyWord == '新年歌':
+                       return autoReply.keywordsReply(msg)
+                   else:
+                       return autoReply.defaultReply(msg,content=replyText['defaultText'])
+                
+               return autoReply.defaultReply(msg,content=replyText['defaultText']) 
+            else:
+               return autoReply.defaultReply(msg,content=replyText['defaultText']) 
+            
 
         except Exception as e:
             return e
-
-
 
 
